@@ -62,6 +62,7 @@ import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.AcidInventory;
+import com.wasteofplastic.askyblock.listeners.DelayListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
@@ -98,6 +99,7 @@ public class ASkyBlock extends JavaPlugin {
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
+    private Listener delayListener;
 
     // Biome chooser object
     private BiomesPanel biomes;
@@ -112,6 +114,10 @@ public class ASkyBlock extends JavaPlugin {
 
     // Update object
     private Update updateCheck = null;
+    
+    // Teleportation delay
+    public HashMap<String, Integer> ids = new HashMap<String, Integer>();
+    public HashMap<String, Integer> warmups = new HashMap<String, Integer>();
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -1180,6 +1186,7 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new SchematicsPanel(), this);
 	// Track incoming world teleports
 	manager.registerEvents(new WorldEnter(this), this);
+	manager.registerEvents(new DelayListener(this), this);
     }
 
 
@@ -1297,4 +1304,12 @@ public class ASkyBlock extends JavaPlugin {
     public Locale myLocale() {
 	return availableLocales.get("locale");
     }
+
+    public void stop(String player) {
+		if (ids.get(player) != null) {
+			this.getServer().getScheduler().cancelTask(ids.get(player));
+			ids.remove(player);
+			warmups.remove(player);
+		}
+	}
 }

@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1002,8 +1003,7 @@ public class GridManager {
      * @return true if successful, false if not
      */
     public boolean homeTeleport(final Player player, int number) {
-	Location home = null;
-	home = getSafeHomeLocation(player.getUniqueId(), number);
+	final Location home = getSafeHomeLocation(player.getUniqueId(), number);
 	// Check if the player is a passenger in a boat
 	if (player.isInsideVehicle()) {
 	    Entity boat = player.getVehicle();
@@ -1018,13 +1018,50 @@ public class GridManager {
 	if (home == null) {
 	    // The home is not safe
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-		player.teleport(player.getWorld().getSpawnLocation());
+	    	
+	    	// Delay teleportation
+	    	if (!plugin.warmups.containsKey(player.getName())) {
+				player.sendMessage(ChatColor.GREEN + "Warmup phase... Please do not move!");
+				plugin.warmups.put(player.getName(), 5);
+				int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+					public void run() {
+						if (player != null && plugin.warmups.get(player.getName()) > 0) {
+							player.sendMessage(ChatColor.RED + Integer.toString(plugin.warmups.get(player.getName())));
+							plugin.warmups.put(player.getName(), plugin.warmups.get(player.getName()) - 1);
+						} else {
+							player.teleport(player.getWorld().getSpawnLocation());
+							plugin.stop(((OfflinePlayer) player).getName());
+						}
+					}
+				}, 0L, 20L);
+				plugin.ids.put(player.getName(), id);
+			} else {
+				player.sendMessage(ChatColor.RED + "You are already about to teleport! Please wait...");
+			}
 	    }
 	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);
-	player.teleport(home);
+	// Delay teleportation
+	if (!plugin.warmups.containsKey(player.getName())) {
+		player.sendMessage(ChatColor.GREEN + "Warmup phase... Please do not move!");
+		plugin.warmups.put(player.getName(), 5);
+		int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			public void run() {
+				if (player != null && plugin.warmups.get(player.getName()) > 0) {
+					player.sendMessage(ChatColor.RED + Integer.toString(plugin.warmups.get(player.getName())));
+					plugin.warmups.put(player.getName(), plugin.warmups.get(player.getName()) - 1);
+				} else {
+					player.teleport(home);
+					plugin.stop(((OfflinePlayer) player).getName());
+				}
+			}
+		}, 0L, 20L);
+		plugin.ids.put(player.getName(), id);
+	} else {
+		player.sendMessage(ChatColor.RED + "You are already about to teleport to the spawn! Please wait...");
+	}
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
