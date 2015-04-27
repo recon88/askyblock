@@ -678,8 +678,6 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
-	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP", 8);
-	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2", 12);
 	// Max home number
 	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
 	if (Settings.maxHomes < 1) {

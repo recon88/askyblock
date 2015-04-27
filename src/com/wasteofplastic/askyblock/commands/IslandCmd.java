@@ -48,6 +48,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -1184,11 +1185,11 @@ public class IslandCmd implements CommandExecutor {
 			if (teamLeader.equals(playerUUID)) {
 			    // Check to see if the team is already full
 			    int maxSize = Settings.maxTeamSize;
-			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-				maxSize = Settings.maxTeamSizeVIP;
-			    }
-			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-				maxSize = Settings.maxTeamSizeVIP2;
+			    // Dynamic team sizes with permissions
+			    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+			    	if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+			    		maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+			    	}
 			    }
 			    if (teamMembers.size() < maxSize) {
 				player.sendMessage(ChatColor.GREEN
@@ -1319,12 +1320,12 @@ public class IslandCmd implements CommandExecutor {
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    if (teamLeader.equals(playerUUID)) {
 			int maxSize = Settings.maxTeamSize;
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-			    maxSize = Settings.maxTeamSizeVIP;
-			}
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-			    maxSize = Settings.maxTeamSizeVIP2;
-			}
+				// Dynamic team sizes with permissions
+			 	for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+			    	if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+			    		maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+			    	}
+			    }
 			if (teamMembers.size() < maxSize) {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteyouCanInvite.replace("[number]", String.valueOf(maxSize - teamMembers.size())));
 			} else {
@@ -1621,11 +1622,11 @@ public class IslandCmd implements CommandExecutor {
 				if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
 				    // Player has space in their team
 				    int maxSize = Settings.maxTeamSize;
-				    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-					maxSize = Settings.maxTeamSizeVIP;
-				    }
-				    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-					maxSize = Settings.maxTeamSizeVIP2;
+				    // Dynamic team sizes with permissions
+				 	for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+				    	if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+				    		maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+				    	}
 				    }
 				    if (teamMembers.size() < maxSize) {
 					// If that player already has an invite out

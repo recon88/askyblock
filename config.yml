@@ -49,12 +49,9 @@ island:
    startx: 0
    startz: 0
 
-   # Max team size
+   # Default max team size
+   # You can use this permission to change it for specific user groups: askyblock.team.maxsize.<number>
    maxteamsize: 4
-   # VIP team size - set by permission askyblock.team.vip
-   vipteamsize: 8
-   # VIP2 team size - set by permission askyblock.team.vip2
-   vip2teamsize: 12
 
    # Items that will be in the chest when the player starts an island
    # Must be in Bukkit Materials format. Format is <Material>:<Qty>
