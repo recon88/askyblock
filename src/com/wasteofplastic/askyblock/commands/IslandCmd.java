@@ -1138,7 +1138,7 @@ public class IslandCmd implements CommandExecutor {
 				}, 0L, 20L);
 				plugin.ids.put(player.getName(), id);
 			} else {
-				player.sendMessage(ChatColor.RED + "You are already about to teleport to the spawn! Please wait...");
+				player.sendMessage(ChatColor.RED + "You are already about to teleport! Please wait...");
 			}
 		/*
 		 * player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
