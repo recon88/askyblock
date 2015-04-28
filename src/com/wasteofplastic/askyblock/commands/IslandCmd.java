@@ -1820,26 +1820,7 @@ public class IslandCmd implements CommandExecutor {
 			} else {
 			    // Just move target to spawn
 			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-			    	
-			    	// Delay teleportation
-			    	if (!plugin.warmups.containsKey(player.getName())) {
-						player.sendMessage(ChatColor.GREEN + "Warmup phase... Please do not move!");
-						plugin.warmups.put(player.getName(), 5);
-						int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-							public void run() {
-								if (player != null && plugin.warmups.get(player.getName()) > 0) {
-									player.sendMessage(ChatColor.RED + Integer.toString(plugin.warmups.get(player.getName())));
-									plugin.warmups.put(player.getName(), plugin.warmups.get(player.getName()) - 1);
-								} else {
-									target.teleport(player.getWorld().getSpawnLocation());
-									plugin.stop(((OfflinePlayer) player).getName());
-								}
-							}
-						}, 0L, 20L);
-						plugin.ids.put(player.getName(), id);
-					} else {
-						player.sendMessage(ChatColor.RED + "You are already about to teleport! Please wait...");
-					}
+					target.teleport(player.getWorld().getSpawnLocation());
 				/*
 				 * target.sendBlockChange(target.getWorld().
 				 * getSpawnLocation()
@@ -1951,26 +1932,7 @@ public class IslandCmd implements CommandExecutor {
 				    target.updateInventory();
 				}
 				if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-					
-					// Delay teleportation
-			    	if (!plugin.warmups.containsKey(player.getName())) {
-						player.sendMessage(ChatColor.GREEN + "Warmup phase... Please do not move!");
-						plugin.warmups.put(player.getName(), 5);
-						int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-							public void run() {
-								if (player != null && plugin.warmups.get(player.getName()) > 0) {
-									player.sendMessage(ChatColor.RED + Integer.toString(plugin.warmups.get(player.getName())));
-									plugin.warmups.put(player.getName(), plugin.warmups.get(player.getName()) - 1);
-								} else {
-								    target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-									plugin.stop(((OfflinePlayer) player).getName());
-								}
-							}
-						}, 0L, 20L);
-						plugin.ids.put(player.getName(), id);
-					} else {
-						player.sendMessage(ChatColor.RED + "You are already about to teleport! Please wait...");
-					}
+				    target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
 				}
 			    } else {
 				// Offline
@@ -2071,6 +2033,10 @@ public class IslandCmd implements CommandExecutor {
 				}
 				if (!plugin.getPlayers().hasIsland(toVisit)) {
 					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+				    return true;
+				}
+				if (plugin.getGrid().getIsland(playerUUID).isLocked()) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
 				    return true;
 				}
 				// Delay teleportation

@@ -46,6 +46,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.Potion;
@@ -54,6 +55,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.commands.AdminCmd;
@@ -118,6 +120,8 @@ public class ASkyBlock extends JavaPlugin {
     // Teleportation delay
     public HashMap<String, Integer> ids = new HashMap<String, Integer>();
     public HashMap<String, Integer> warmups = new HashMap<String, Integer>();
+    
+    public WorldGuardPlugin wg = null;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -1310,4 +1314,17 @@ public class ASkyBlock extends JavaPlugin {
 			warmups.remove(player);
 		}
 	}
+    
+    /**
+     * Sets up the WorldGuard instance
+     * 
+     */
+    public void setupWorldGuard() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+        
+        // WorldGuard may not be loaded
+        if (!(plugin == null) && (plugin instanceof WorldGuardPlugin)) {
+            wg = (WorldGuardPlugin) plugin;
+        }
+    }
 }

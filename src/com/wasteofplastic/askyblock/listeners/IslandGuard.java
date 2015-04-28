@@ -82,6 +82,10 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.util.Vector;
 
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.RegionContainer;
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
@@ -1162,6 +1166,15 @@ public class IslandGuard implements Listener {
 			//plugin.getLogger().info("Self damage!");
 			return;
 		    }
+		    // WorldGuard check for PvP regions
+			LocalPlayer damaged = plugin.wg.wrapPlayer((Player)e.getEntity());
+			LocalPlayer damager = plugin.wg.wrapPlayer(shooter);
+			RegionContainer container = plugin.wg.getRegionContainer();
+			RegionQuery query = container.createQuery();
+
+			if (query.testState(e.getEntity().getLocation(), damaged, DefaultFlag.PVP) && (query.testState(e.getEntity().getLocation(), damager, DefaultFlag.PVP))) {
+				return;
+			}
 		    // Projectile shot by a player at another player
 		    if (!Settings.allowPvP) {
 			// plugin.getLogger().info("Target player is in a no-PVP area!");
@@ -1193,6 +1206,15 @@ public class IslandGuard implements Listener {
 		}
 	    }
 	} else if (e.getDamager() instanceof Player) {
+		// WorldGuard check for PvP regions
+		LocalPlayer damaged = plugin.wg.wrapPlayer((Player)e.getEntity());
+		LocalPlayer damager = plugin.wg.wrapPlayer((Player)e.getDamager());
+		RegionContainer container = plugin.wg.getRegionContainer();
+		RegionQuery query = container.createQuery();
+
+		if (query.testState(e.getEntity().getLocation(), damaged, DefaultFlag.PVP) && (query.testState(e.getEntity().getLocation(), damager, DefaultFlag.PVP))) {
+			return;
+		}
 	    //plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
 	    if (!Settings.allowPvP) {
