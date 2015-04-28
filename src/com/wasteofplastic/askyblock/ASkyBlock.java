@@ -244,6 +244,8 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().disablePlugin(this);
 	    return;
 	}
+	
+	setupWorldGuard();
 
 	// This can no longer be run in onEnable because the plugin is loaded at
 	// startup and so key variables are

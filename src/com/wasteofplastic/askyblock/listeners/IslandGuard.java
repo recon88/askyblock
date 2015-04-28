@@ -1212,7 +1212,7 @@ public class IslandGuard implements Listener {
 		RegionContainer container = plugin.wg.getRegionContainer();
 		RegionQuery query = container.createQuery();
 
-		if (query.testState(e.getEntity().getLocation(), damaged, DefaultFlag.PVP) && (query.testState(e.getEntity().getLocation(), damager, DefaultFlag.PVP))) {
+		if (query.testState(e.getEntity().getLocation(), damaged, DefaultFlag.PVP) && (query.testState(e.getDamager().getLocation(), damager, DefaultFlag.PVP))) {
 			return;
 		}
 	    //plugin.getLogger().info("DEBUG: Player attack");
