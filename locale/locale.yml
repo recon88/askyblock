@@ -228,6 +228,7 @@ island:
    helpColor: "&e"
    helpSettings: "see island protection and game settings"
    helpChallenges: "/challenges: &fshow challenges"
+   helpVisit: "visit the island of <player>."
 
 ###################
 #/island commands #

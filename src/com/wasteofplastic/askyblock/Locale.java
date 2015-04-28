@@ -177,6 +177,8 @@ public class Locale {
     public String islandhelpTeleport;
     // Expel
     public String islandhelpExpel;
+    // Visit
+    public String islandhelpVisit;
 
     // ////////////////////////////////////
     // /island commands //
@@ -752,6 +754,7 @@ public class Locale {
 		locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
 	islandhelpMakeLeader = ChatColor
 		.translateAlternateColorCodes('&', locale.getString("island.helpMakeLeader", "transfer the island to <player>."));
+	islandhelpVisit = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpVisit", "visit the island of <player>."));
 	islanderrorLevelNotReady = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.errorLevelNotReady", "Can't use that command right now! Try again in a few seconds."));
 	islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',

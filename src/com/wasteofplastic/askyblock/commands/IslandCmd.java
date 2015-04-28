@@ -1088,6 +1088,9 @@ public class IslandCmd implements CommandExecutor {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <locale> - select language");
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.visit")) {
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " visit <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpVisit);
+		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
@@ -2059,6 +2062,41 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return false;
 		    }
+		} else if (split[0].equalsIgnoreCase("visit")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.visit")) {
+				final UUID toVisit = plugin.getPlayers().getUUID(split[1]);
+				if (toVisit == null) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+				    return true;
+				}
+				if (!plugin.getPlayers().hasIsland(toVisit)) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+				    return true;
+				}
+				// Delay teleportation
+		    	if (!plugin.warmups.containsKey(player.getName())) {
+					player.sendMessage(ChatColor.GREEN + "Warmup phase... Please do not move!");
+					plugin.warmups.put(player.getName(), 5);
+					int id = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+						public void run() {
+							if (player != null && plugin.warmups.get(player.getName()) > 0) {
+								player.sendMessage(ChatColor.RED + Integer.toString(plugin.warmups.get(player.getName())));
+								plugin.warmups.put(player.getName(), plugin.warmups.get(player.getName()) - 1);
+							} else {
+								player.teleport(plugin.getPlayers().getHomeLocation(toVisit));
+								plugin.stop(((OfflinePlayer) player).getName());
+							}
+						}
+					}, 0L, 20L);
+					plugin.ids.put(player.getName(), id);
+				} else {
+					player.sendMessage(ChatColor.RED + "You are already about to teleport! Please wait...");
+				}
+				return true;
+			} else {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+				return false;
+			}
 		} else {
 		    return false;
 		}
